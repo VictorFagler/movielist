@@ -23,6 +23,7 @@ const generateMockData = (count) => {
     id: `top${index + 1}`, // Unique ID for each movie
     rank: 32 + index, // Increment rank for each movie
     year: 2023 - index, // Vary the year (just an example)
+    rating: 8.6 - index, // Vary the year (just an example)
   }));
 };
 
