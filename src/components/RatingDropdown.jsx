@@ -20,10 +20,10 @@ const RatingDropdown = ({
     }
   }, [minRating, maxRating, movies, setFilteredMovies, setFilteredCount]);
 
-  // Generate options with .5 increments from 1 to 10, formatted as decimals (e.g. 1.0, 1.5, 2.0, etc.)
+  // Generate options from 1 to 10
   const ratingOptions = [];
   for (let i = 1; i <= 10; i += 0.5) {
-    ratingOptions.push(i.toFixed(1)); // Format to one decimal place
+    ratingOptions.push(i.toFixed(1));
   }
 
   return (
@@ -46,7 +46,7 @@ const RatingDropdown = ({
       -
       <select
         id="max-rating"
-        value={maxRating.toFixed(1)} // Ensure maxRating is displayed as 1.0, 1.5, etc.
+        value={maxRating.toFixed(1)} 
         onChange={(e) => setMaxRating(parseFloat(e.target.value))}
         className="ml-2 p-1 rounded"
       >

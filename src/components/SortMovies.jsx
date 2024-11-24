@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 
-// Styled component for the select field
+
 const SelectField = styled.select`
   padding: 4px;
   font-size: 16px;

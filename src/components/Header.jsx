@@ -1,5 +1,5 @@
 import React from "react";
-import SearchBar from "./SearchBar"; // Make sure SearchBar is imported
+import SearchBar from "./SearchBar"; 
 import styled from "styled-components";
 
 const ButtonContainer = styled.div`

@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import useFetchData from "../hooks/useFetchData";
 import Movies from "./Movies";
 import SearchBar from "./SearchBar";
 import SortMovies from "./SortMovies";
-import RatingDropdown from "./RatingDropdown"; // Use RatingDropdown
+import RatingDropdown from "./RatingDropdown"; 
 import styled from "styled-components";
 
 const ButtonContainer = styled.div`
@@ -39,40 +39,43 @@ const StyledButton = styled.button`
 const MovieList = () => {
   const { movies, loading, error, setFetchEnabled } = useFetchData();
   const [searchQuery, setSearchQuery] = useState("");
-  const [filteredMovies, setFilteredMovies] = useState([]); // Ensure it's always an array
-  const [filteredCount, setFilteredCount] = useState(0); // Track the count of filtered movies
-  const [sortCriteria, setSortCriteria] = useState("alphabetical");
-  const [minRating, setMinRating] = useState(1); // Track min rating
-  const [maxRating, setMaxRating] = useState(10); // Track max rating
+  const [filteredMovies, setFilteredMovies] = useState([]);
+  const [filteredCount, setFilteredCount] = useState(0);
+  const [sortCriteria, setSortCriteria] = useState("rating");
+  const [minRating, setMinRating] = useState(1);
+  const [maxRating, setMaxRating] = useState(10);
 
-  // Initialize filteredMovies with all movies when they are fetched
   useEffect(() => {
     if (Array.isArray(movies)) {
       setFilteredMovies(movies);
     }
   }, [movies]);
 
-  // Handle search input
-  const handleSearchChange = (query) => {
-    setSearchQuery(query);
-    const filtered = movies.filter((movie) =>
-      movie.title.toLowerCase().includes(query.toLowerCase())
-    );
-    setFilteredMovies(filtered);
-  };
+  // Handle search input using useCallback
+  const handleSearchChange = useCallback(
+    (query) => {
+      setSearchQuery(query);
+      const filtered = movies.filter((movie) =>
+        movie.title.toLowerCase().includes(query.toLowerCase())
+      );
+      setFilteredMovies(filtered);
+    },
+    [movies] // Only recreate function if `movies` changes
+  );
 
-  const handleClearSearch = () => {
+  const handleClearSearch = useCallback(() => {
     setSearchQuery("");
     setFilteredMovies(movies);
-  };
+  }, [movies]); // Only recreate function if `movies` changes
 
-  const handleSortChange = (newSortCriteria) => {
+  const handleSortChange = useCallback((newSortCriteria) => {
     setSortCriteria(newSortCriteria);
-  };
+  }, []); 
 
-  // Sort filteredMovies based on sortCriteria
-  const sortedMovies = () => {
-    let sorted = [...filteredMovies]; // Copy the array to avoid direct mutation
+    // Memoize sortedMovies to avoid recalculating unnecessarily
+  const sortedMovies = useMemo(() => {
+    console.log("Sorting movies...");
+    let sorted = [...filteredMovies];
     switch (sortCriteria) {
       case "alphabetical":
         sorted.sort((a, b) => a.title.localeCompare(b.title));
@@ -87,7 +90,7 @@ const MovieList = () => {
         break;
     }
     return sorted;
-  };
+  }, [filteredMovies, sortCriteria]);
 
   // Ensure filteredMovies is always an array, even if movies is empty
   if (!Array.isArray(filteredMovies)) {
@@ -103,8 +106,8 @@ const MovieList = () => {
         <h2 className="flex font-bold p-6 text-4xl">Top 100 Movies</h2>
         <SearchBar
           searchQuery={searchQuery}
-          onSearchChange={handleSearchChange}
-          onClearSearch={handleClearSearch}
+          onSearchChange={handleSearchChange} // Optimized with useCallback
+          onClearSearch={handleClearSearch} // Optimized with useCallback
         />
         <div>
           <ButtonContainer>
@@ -132,17 +135,17 @@ const MovieList = () => {
               movies={movies}
               setFilteredMovies={setFilteredMovies}
               setFilteredCount={setFilteredCount}
-              minRating={minRating} // Pass minRating to RatingDropdown
-              maxRating={maxRating} // Pass maxRating to RatingDropdown
-              setMinRating={setMinRating} // Pass setMinRating to RatingDropdown
-              setMaxRating={setMaxRating} // Pass setMaxRating to RatingDropdown
+              minRating={minRating}
+              maxRating={maxRating}
+              setMinRating={setMinRating}
+              setMaxRating={setMaxRating}
             />
           </div>
 
           <div className="flex items-center">
             <SortMovies
               sortCriteria={sortCriteria}
-              onSortChange={handleSortChange}
+              onSortChange={handleSortChange} // Optimized with useCallback
             />
           </div>
         </div>
@@ -151,9 +154,7 @@ const MovieList = () => {
           <p>{filteredCount} movies are currently displayed.</p>
         </div>
       </div>
-      <Movies movies={sortedMovies()} loading={loading} error={error} />
-
-      {/* Add the following block to display the rating filter range */}
+      <Movies movies={sortedMovies} loading={loading} error={error} />
     </div>
   );
 };

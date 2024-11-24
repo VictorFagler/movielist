@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-// Mock data for testing
+// Mock data for testing & styling
 const generateMockData = (count) => {
   const baseData = {
     title: "Oppenheimer",
@@ -20,10 +20,10 @@ const generateMockData = (count) => {
 
   return Array.from({ length: count }, (_, index) => ({
     ...baseData,
-    id: `top${index + 1}`, // Unique ID for each movie
-    rank: 32 + index, // Increment rank for each movie
-    year: 2023 - index, // Vary the year (just an example)
-    rating: 8.6 - index, // Vary the year (just an example)
+    id: `top${index + 1}`, 
+    rank: 32 + index, 
+    year: 2023 - index, 
+    rating: 8.6 - index, 
   }));
 };
 
@@ -34,12 +34,11 @@ const useFetchData = () => {
   const [movies, setMovies] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [fetchEnabled, setFetchEnabled] = useState(false); // Add toggle for real API fetch
+  const [fetchEnabled, setFetchEnabled] = useState(true); // Add toggle for real API fetch
 
   useEffect(() => {
     if (fetchEnabled) {
       // Perform the real fetch logic here if fetchEnabled is true
-      // Simulating a real fetch request
       const fetchData = async () => {
         try {
           const response = await fetch(
